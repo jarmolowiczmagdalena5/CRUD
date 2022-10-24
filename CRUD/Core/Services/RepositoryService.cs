@@ -21,6 +21,10 @@ namespace CRUD.Core.Services
         {
             return _studentRepository.GetStudents();
         }
+        public Student? GetStudent(int id)
+        {
+            return _studentRepository.GetStudent(id);
+        }
         public void AddStudent(Student student)
         {
             _studentRepository.AddStudent(student);

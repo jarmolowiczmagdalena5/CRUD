@@ -16,10 +16,16 @@ namespace CRUD.Controllers
             _repositoryService = new RepositoryService();
         }
 
-        [HttpGet("GetStudent")]
+        [HttpGet("GetStudents")]
         public List<Student> GetStudent()
         {
             return _repositoryService.GetStudents();
+        }
+
+        [HttpGet("GetStudent")]
+        public Student? GetStudent(int id)
+        {
+            return _repositoryService.GetStudent(id);
         }
 
         [HttpPost("AddStudent")]

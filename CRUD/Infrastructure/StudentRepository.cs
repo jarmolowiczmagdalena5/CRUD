@@ -41,6 +41,27 @@ namespace CRUD.Infrastructure
             _sqlConnection.Close();
             return _students;
         }
+
+        public Student? GetStudent(int id)
+        {
+            string sql = "SELECT * FROM Students";
+            SqlCommand sqlCommand = new SqlCommand(sql, _sqlConnection);
+
+            _sqlConnection.Open();
+            SqlDataReader dataReader = sqlCommand.ExecuteReader();
+            while (dataReader.Read())
+            {
+                _students.Add(new Student()
+                {
+                    Id = (int)dataReader.GetValue(0),
+                    Name = dataReader.GetValue(1).ToString(),
+                    Age = (int)dataReader.GetValue(2)
+                });
+            }
+            _sqlConnection.Close();
+            return _students.FirstOrDefault(x => x.Id == id);
+        }
+
         public void AddStudent(Student student)
         {
             string sql = $"INSERT INTO Students (Name, Age) VALUES ('@Name', @Age);";
