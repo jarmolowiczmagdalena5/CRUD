@@ -1,4 +1,5 @@
 ﻿using CRUD.Infrastructure;
+using CRUD.Interfaces;
 using CRUD.Models;
 using System;
 using System.Collections.Generic;
@@ -8,13 +9,13 @@ using System.Threading.Tasks;
 
 namespace CRUD.Core.Services
 {
-    public class RepositoryService
+    public class RepositoryService : IRepositoryService
     {
-        private readonly StudentRepository _studentRepository;
+        private readonly IStudentRepository _studentRepository;
 
-        public RepositoryService()
+        public RepositoryService(IStudentRepository studentRepository)
         {
-            _studentRepository = new StudentRepository();
+            _studentRepository = studentRepository;
         }
 
         public List<Student> GetStudents()

@@ -5,95 +5,71 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
-
+using Dapper;
+using CRUD.Interfaces;
 
 namespace CRUD.Infrastructure
 {
 
 
-    public class StudentRepository
+    public class StudentRepository : IStudentRepository
     {
         private readonly SqlConnection _sqlConnection;
-        private readonly List<Student> _students;
         public StudentRepository()
         {
             _sqlConnection = new SqlConnection(@"Data Source=DESKTOP-CIMN7NI\SQLEXPRESS;Initial Catalog=Students;Trusted_Connection=True");
-            _students = new List<Student>();
         }
 
 
         public List<Student> GetStudents()
         {
-            string sql = "SELECT * FROM Students";
-            SqlCommand sqlCommand = new SqlCommand(sql, _sqlConnection);
-
             _sqlConnection.Open();
-            SqlDataReader dataReader = sqlCommand.ExecuteReader();
-            while (dataReader.Read())
-            {
-                _students.Add(new Student()
-                {
-                    Id = (int)dataReader.GetValue(0),
-                    Name = dataReader.GetValue(1).ToString(),
-                    Age = (int)dataReader.GetValue(2)
-                });
-            }
-            _sqlConnection.Close();
-            return _students;
+            return _sqlConnection.Query<Student>("SELECT * FROM Students").ToList();
         }
 
         public Student? GetStudent(int id)
         {
-            string sql = "SELECT * FROM Students";
-            SqlCommand sqlCommand = new SqlCommand(sql, _sqlConnection);
-
+            var students = new List<Student>();
             _sqlConnection.Open();
-            SqlDataReader dataReader = sqlCommand.ExecuteReader();
-            while (dataReader.Read())
-            {
-                _students.Add(new Student()
-                {
-                    Id = (int)dataReader.GetValue(0),
-                    Name = dataReader.GetValue(1).ToString(),
-                    Age = (int)dataReader.GetValue(2)
-                });
-            }
-            _sqlConnection.Close();
-            return _students.FirstOrDefault(x => x.Id == id);
+            students = _sqlConnection.Query<Student>("SELECT * FROM Students").ToList();
+            return students.FirstOrDefault(x => x.StudentID == id);
         }
 
         public void AddStudent(Student student)
         {
-            string sql = $"INSERT INTO Students (Name, Age) VALUES ('@Name', @Age);";
-            SqlCommand sqlCommand = new SqlCommand(sql, _sqlConnection);
-            sqlCommand.Parameters.AddWithValue("@Name", student.Name);
-            sqlCommand.Parameters.AddWithValue("@Age", student.Age);
+            var dictionary = new Dictionary<string, object?>
+            {
+                 { "@Name", student.Name },
+                 { "@Age", student.Age }
+            };
 
-            _sqlConnection.Open();
-            sqlCommand.ExecuteNonQuery();
-            _sqlConnection.Close();
+            var parameters = new DynamicParameters(dictionary);
+
+            _sqlConnection.Execute($"INSERT INTO Students (Name, Age) VALUES (@Name, @Age);", parameters);
         }
         public void UpdateStudent(Student student)
         {
-            string sql = $"UPDATE Students SET Name=@Name, Age=@Age WHERE StudentID=@Id;";
-            SqlCommand sqlCommand = new SqlCommand(sql, _sqlConnection);
-            sqlCommand.Parameters.AddWithValue("@Name", student.Name);
-            sqlCommand.Parameters.AddWithValue("@Age", student.Age);
-            sqlCommand.Parameters.AddWithValue("@Id", student.Id);
+            var dictionary = new Dictionary<string, object?>
+            {
+                 { "@Name", student.Name },
+                 { "@Age", student.Age },
+                 { "@StudentID", student.StudentID }
+            };
 
-            _sqlConnection.Open();
-            sqlCommand.ExecuteNonQuery();
-            _sqlConnection.Close();
+            var parameters = new DynamicParameters(dictionary);
+
+            _sqlConnection.Execute($"UPDATE Students SET Name=@Name, Age=@Age WHERE StudentID=@StudentID;", parameters);
         }
         public void DeleteStudent(int id)
         {
-            string sql = $"DELETE Students WHERE StudentID=@Id;";
-            SqlCommand sqlCommand = new SqlCommand(sql, _sqlConnection);
-            sqlCommand.Parameters.AddWithValue("@Id", id);
+            var dictionary = new Dictionary<string, object?>
+            {
+                 { "@StudentID", id },
+            };
+            var parameters = new DynamicParameters(dictionary);
 
             _sqlConnection.Open();
-            sqlCommand.ExecuteNonQuery();
-            _sqlConnection.Close();
+            _sqlConnection.Execute($"DELETE Students WHERE StudentID=@StudentID;", parameters);
         }
     }
 }

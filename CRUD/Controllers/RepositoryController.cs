@@ -1,5 +1,6 @@
 ﻿using CRUD.Core.Services;
 using CRUD.Infrastructure;
+using CRUD.Interfaces;
 using CRUD.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,11 +10,11 @@ namespace CRUD.Controllers
     [Route("[controller]")]
     public class RepositoryController : ControllerBase
     {
-        private readonly RepositoryService _repositoryService;
+        private readonly IRepositoryService _repositoryService;
 
-        public RepositoryController()
+        public RepositoryController(IRepositoryService repositoryService)
         {
-            _repositoryService = new RepositoryService();
+            _repositoryService = repositoryService;
         }
 
         [HttpGet("GetStudents")]
