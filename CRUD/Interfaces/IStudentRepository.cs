@@ -4,10 +4,10 @@ namespace CRUD.Interfaces
 {
     public interface IStudentRepository
     {
-        List<Student> GetStudents();
-        Student? GetStudent(int id);
-        void AddStudent(Student student);
-        void UpdateStudent(Student student);
-        void DeleteStudent(int id);
+        Task <List<Student>> GetStudents();
+        Task <Student?> GetStudent(int id);
+        Task AddStudent(Student student);
+        Task UpdateStudent(Student student);
+        Task DeleteStudent(int id);
     }
 }

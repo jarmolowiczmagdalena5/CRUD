@@ -18,25 +18,25 @@ namespace CRUD.Core.Services
             _studentRepository = studentRepository;
         }
 
-        public List<Student> GetStudents()
+        public async Task <List<Student>> GetStudents()
         {
-            return _studentRepository.GetStudents();
+            return await _studentRepository.GetStudents();
         }
-        public Student? GetStudent(int id)
+        public async Task <Student?> GetStudent(int id)
         {
-            return _studentRepository.GetStudent(id);
+            return await _studentRepository.GetStudent(id);
         }
-        public void AddStudent(Student student)
+        public async Task AddStudent(Student student)
         {
-            _studentRepository.AddStudent(student);
+            await _studentRepository.AddStudent(student);
         }
-        public void UpdateStudent(Student student)
+        public async Task UpdateStudent(Student student)
         {
-            _studentRepository.UpdateStudent(student);
+           await _studentRepository.UpdateStudent(student);
         }
-        public void DeleteStudent(int id)
+        public async Task DeleteStudent(int id)
         {
-            _studentRepository.DeleteStudent(id);
+            await _studentRepository.DeleteStudent(id);
         }
     }
 }

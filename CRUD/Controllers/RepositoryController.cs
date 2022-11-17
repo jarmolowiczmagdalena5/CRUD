@@ -18,32 +18,32 @@ namespace CRUD.Controllers
         }
 
         [HttpGet("GetStudents")]
-        public List<Student> GetStudent()
+        public async Task<List<Student>> GetStudents()
         {
-            return _repositoryService.GetStudents();
+            return await _repositoryService.GetStudents();
         }
 
         [HttpGet("GetStudent")]
-        public Student? GetStudent(int id)
+        public async Task<Student?> GetStudent(int id)
         {
-            return _repositoryService.GetStudent(id);
+            return await _repositoryService.GetStudent(id);
         }
 
         [HttpPost("AddStudent")]
-        public void AddStudent([FromBody]Student student)
+        public async Task AddStudent([FromBody] Student student)
         {
-            _repositoryService.AddStudent(student);
+            await _repositoryService.AddStudent(student);
         }
 
         [HttpPut("UpdateStudent")]
-        public void UpdateStudent([FromBody] Student student)
+        public async Task UpdateStudent([FromBody] Student student)
         {
-            _repositoryService.UpdateStudent(student);
+            await _repositoryService.UpdateStudent(student);
         }
         [HttpDelete("DeleteStudent")]
-        public void DeleteStudent(int id)
+        public async Task DeleteStudent(int id)
         {
-            _repositoryService.DeleteStudent(id);
+            await _repositoryService.DeleteStudent(id);
         }
     }
 }

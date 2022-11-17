@@ -1,17 +1,16 @@
 ﻿using CRUD.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
 using Dapper;
 using CRUD.Interfaces;
+using System.Collections;
+using System.Linq;
 
 namespace CRUD.Infrastructure
 {
-
-
     public class StudentRepository : IStudentRepository
     {
         private readonly SqlConnection _sqlConnection;
@@ -21,21 +20,21 @@ namespace CRUD.Infrastructure
         }
 
 
-        public List<Student> GetStudents()
+        public async Task<List<Student>> GetStudents()
         {
-            _sqlConnection.Open();
-            return _sqlConnection.Query<Student>("SELECT * FROM Students").ToList();
+            await _sqlConnection.OpenAsync();
+            var students = await _sqlConnection.QueryAsync<Student>("SELECT * FROM Students");
+            return students.ToList();
         }
 
-        public Student? GetStudent(int id)
+        public async Task <Student?> GetStudent(int id)
         {
-            var students = new List<Student>();
             _sqlConnection.Open();
-            students = _sqlConnection.Query<Student>("SELECT * FROM Students").ToList();
-            return students.FirstOrDefault(x => x.StudentID == id);
+            var students = await _sqlConnection.QueryAsync<Student>("SELECT * FROM Students");
+            return  students.FirstOrDefault(x => x.StudentID == id);
         }
 
-        public void AddStudent(Student student)
+        public async Task AddStudent(Student student)
         {
             var dictionary = new Dictionary<string, object?>
             {
@@ -45,9 +44,9 @@ namespace CRUD.Infrastructure
 
             var parameters = new DynamicParameters(dictionary);
 
-            _sqlConnection.Execute($"INSERT INTO Students (Name, Age) VALUES (@Name, @Age);", parameters);
+            await _sqlConnection.ExecuteAsync($"INSERT INTO Students (Name, Age) VALUES (@Name, @Age);", parameters);
         }
-        public void UpdateStudent(Student student)
+        public async Task UpdateStudent(Student student)
         {
             var dictionary = new Dictionary<string, object?>
             {
@@ -58,9 +57,9 @@ namespace CRUD.Infrastructure
 
             var parameters = new DynamicParameters(dictionary);
 
-            _sqlConnection.Execute($"UPDATE Students SET Name=@Name, Age=@Age WHERE StudentID=@StudentID;", parameters);
+           await _sqlConnection.ExecuteAsync($"UPDATE Students SET Name=@Name, Age=@Age WHERE StudentID=@StudentID;", parameters);
         }
-        public void DeleteStudent(int id)
+        public async Task DeleteStudent(int id)
         {
             var dictionary = new Dictionary<string, object?>
             {
@@ -69,7 +68,7 @@ namespace CRUD.Infrastructure
             var parameters = new DynamicParameters(dictionary);
 
             _sqlConnection.Open();
-            _sqlConnection.Execute($"DELETE Students WHERE StudentID=@StudentID;", parameters);
+            await _sqlConnection.ExecuteAsync($"DELETE Students WHERE StudentID=@StudentID;", parameters);
         }
     }
 }
